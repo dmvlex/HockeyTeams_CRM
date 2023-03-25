@@ -1,0 +1,142 @@
+﻿<Window x:Class="Nikolay_YW.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Nikolay_YW"
+        mc:Ignorable="d"
+        Title="Хоккеисты" 
+        Style="{StaticResource DarkWindow}"
+        WindowStartupLocation="CenterScreen"
+        Height="600" Width="1250">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.07*"/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition Height="0.15*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <!--Основная таблица-->
+        <ListView Name="PlayersList" Margin="3"
+                  Grid.Row="1"
+                  Grid.RowSpan="2" Grid.Column="0">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Удалить выбранное" Click="Delete"/>
+                    <MenuItem Header="Обновить таблицу" Click="Read"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.View>
+                <GridView >
+                    <!--<GridViewColumn Header="Id" Width="40" DisplayMemberBinding="{Binding Id}"/>-->
+                    <GridViewColumn Header="ФИО" Width="240" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Команда" Width="120"  DisplayMemberBinding="{Binding Team}"/>
+                    <GridViewColumn Header="Забито шайб" Width="120"  DisplayMemberBinding="{Binding Goals}"/>
+                    <GridViewColumn Header="Голевые подачи" Width="140"  DisplayMemberBinding="{Binding MayGoals}"/>
+                    <GridViewColumn Header="Штрафное время (сек.)" Width="190" DisplayMemberBinding="{Binding PenaltyTime}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!--Таблица лучших игроков-->
+        <ListView Name="BestPlayersList" Margin="3"
+                  Grid.Row="1"
+                  Grid.Column="1">
+            <ListView.View>
+                <GridView>
+                    <!--<GridViewColumn Header="Id" Width="40" DisplayMemberBinding="{Binding Id}"/>-->
+                    <GridViewColumn Header="ФИО" Width="100" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Команда" Width="100" DisplayMemberBinding="{Binding Team}"/>
+                    <GridViewColumn Header="Очки" Width="200" DisplayMemberBinding="{Binding Points}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        
+        <!--Панель сортировки-->
+        <Label Content="Сортировать"
+               Grid.Row="3" HorizontalAlignment="Left"/>
+        <ComboBox x:Name="DirectionBox" Width="160" SelectedIndex="0" SelectionChanged="SelectionChanged"
+                  Grid.Row="3" Margin="130 3 3 3"/>
+        <Label Content="столбец" Margin="290 3 3 3"
+               Grid.Row="3" HorizontalAlignment="Left"/>
+        <ComboBox x:Name="ColumnBox" Width="180" SelectedIndex="0" SelectionChanged="SelectionChanged"
+                  Grid.Row="3" Margin="370 3 3 3"/>
+        <!--Блок добавления нового игрока-->
+        <Grid  Grid.Column="1"
+               Grid.Row="2"
+               Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Label Content="Информация о игроке" Style="{StaticResource HeaderLabel}"
+                   Grid.Row="0" Grid.ColumnSpan="2"/>
+
+            <Label Content="ФИО"
+                   Grid.Row="1"/>
+            <TextBox x:Name="NameBox" Style="{StaticResource DarkTextBox}"
+                   MaxLength="200"
+                   Text="{Binding ElementName=PlayersList,Path=SelectedItem.Name,Mode=OneWay}"
+                   Grid.Row="1" Grid.Column="1"/>
+
+            <Label Content="Команда"
+                   Grid.Row="2"/>
+            <TextBox x:Name="TeamBox" Style="{StaticResource DarkTextBox}"
+                 MaxLength="200"
+                 Text="{Binding ElementName=PlayersList,Path=SelectedItem.Team,Mode=OneWay}"
+                 Grid.Row="2" Grid.Column="1"/>
+
+            <Label Content="Забито шайб"
+                   Grid.Row="3"/>
+            <TextBox x:Name="GoalBox" Style="{StaticResource DarkTextBox}"
+                 MaxLength="4" TextChanged="GoalBoxTextChanged"
+                 Text="{Binding ElementName=PlayersList,Path=SelectedItem.Goals,Mode=OneWay}"
+                 Grid.Row="3" Grid.Column="1"/>
+
+            <Label Content="Подачи"
+                   Grid.Row="4"/>
+            <TextBox x:Name="MayGoalBox" Style="{StaticResource DarkTextBox}"
+                 MaxLength="4" TextChanged="MayGoalBoxTextChanged"
+                 Text="{Binding ElementName=PlayersList,Path=SelectedItem.MayGoals,Mode=OneWay}"
+                 Grid.Row="4" Grid.Column="1"/>
+
+            <Label Content="Штрафное время"
+                   Grid.Row="5"/>
+            <TextBox x:Name="PenaltyTimeBox" Style="{StaticResource DarkTextBox}"
+                 MaxLength="6" TextChanged="PenaltyTimeTextChanged"
+                 Text="{Binding ElementName=PlayersList,Path=SelectedItem.PenaltyTime,Mode=OneWay}"
+                 Grid.Row="5" Grid.Column="1"/>
+
+            <Button x:Name="AddPlayerButton" Style="{StaticResource DarkButtons}"
+                    Click="Create" Content="Добавить" 
+                    Grid.Row="6"/>
+            <Button x:Name="UpdatePlayersButton" Style="{StaticResource DarkButtons}"
+                    Click="Update"
+                    Content="Обновить"
+                    Grid.Row="6" Grid.Column="1"/>
+            <Button x:Name="MoreInfoButton" Style="{StaticResource DarkButtons}"
+                    Content="Больше информации" Click="OpenMoreInfo"
+                    Grid.Row="7" Grid.ColumnSpan="2" Cursor="Hand"/>
+
+
+        </Grid>
+
+
+    </Grid>
+</Window>
